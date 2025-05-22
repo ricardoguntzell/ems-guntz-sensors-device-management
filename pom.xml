@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.guntz.sensors</groupId>
-	<artifactId>temperature-monitoring</artifactId>
+	<artifactId>device-management</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>temperature-monitoring</name>
+	<name>device-management</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

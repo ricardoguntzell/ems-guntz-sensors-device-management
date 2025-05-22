@@ -1,3 +1,8 @@
+# Read Me First
+The following was discovered as part of building this project:
+
+* The original package name 'br.com.guntz.sensors.device-management' is invalid and this project uses 'br.com.guntz.sensors.device_management' instead.
+
 # Getting Started
 
 ### Reference Documentation

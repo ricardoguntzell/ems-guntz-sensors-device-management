@@ -1,4 +1,4 @@
-package br.com.guntz.sensors.device_management;
+package br.com.guntz.sensors.device.management;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

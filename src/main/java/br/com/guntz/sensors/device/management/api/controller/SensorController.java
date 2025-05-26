@@ -8,6 +8,9 @@ import br.com.guntz.sensors.device.management.domain.model.SensorId;
 import br.com.guntz.sensors.device.management.domain.repository.SensorRepository;
 import io.hypersistence.tsid.TSID;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,31 +23,31 @@ public class SensorController {
 
     private final SensorRepository sensorRepository;
 
+    @GetMapping
+    public ResponseEntity<Page<SensorOutput>> search(@PageableDefault Pageable pageable) {
+        Page<SensorOutput> sensors = sensorRepository.findAll(pageable)
+                .map(this::convertOutputModel);
+
+        return ResponseEntity.ok(sensors);
+
+    }
+
     @GetMapping("/{sensorId}")
     public ResponseEntity<SensorOutput> getOne(@PathVariable TSID sensorId) {
         Sensor sensor = sensorRepository.findById(new SensorId(sensorId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        return ResponseEntity.ok(convertModel(sensor));
+        return ResponseEntity.ok(convertOutputModel(sensor));
     }
 
     @PostMapping
     public ResponseEntity<SensorOutput> create(@RequestBody SensorInput input) {
-        Sensor sensor =
-                Sensor.builder()
-                        .id(new SensorId(IdGenerator.generateTSID()))
-                        .name(input.getName())
-                        .ip(input.getIp())
-                        .location(input.getLocation())
-                        .protocol(input.getProtocol())
-                        .model(input.getModel())
-                        .enabled(false)
-                        .build();
+        Sensor sensor = convertInputModel(input);
 
-        return ResponseEntity.ok(convertModel(sensorRepository.saveAndFlush(sensor)));
+        return ResponseEntity.ok(convertOutputModel(sensorRepository.saveAndFlush(sensor)));
     }
 
-    private SensorOutput convertModel(Sensor sensor) {
+    private SensorOutput convertOutputModel(Sensor sensor) {
         return SensorOutput.builder()
                 .id(sensor.getId().getValue())
                 .name(sensor.getName())
@@ -53,6 +56,19 @@ public class SensorController {
                 .protocol(sensor.getProtocol())
                 .model(sensor.getModel())
                 .enabled(sensor.getEnabled())
+                .build();
+
+    }
+
+    private Sensor convertInputModel(SensorInput input) {
+        return Sensor.builder()
+                .id(new SensorId(IdGenerator.generateTSID()))
+                .name(input.getName())
+                .ip(input.getIp())
+                .location(input.getLocation())
+                .protocol(input.getProtocol())
+                .model(input.getModel())
+                .enabled(false)
                 .build();
 
     }

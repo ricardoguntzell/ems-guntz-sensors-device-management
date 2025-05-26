@@ -1,13 +1,11 @@
 package br.com.guntz.sensors.device.management.api.model;
 
-import br.com.guntz.sensors.device.management.domain.model.Sensor;
 import io.hypersistence.tsid.TSID;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.BeanUtils;
+import lombok.Builder;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
+@Builder
 public class SensorOutput {
 
     private TSID id;
@@ -23,9 +21,4 @@ public class SensorOutput {
     private String model;
 
     private Boolean enabled;
-
-    public SensorOutput(Sensor sensor) {
-        setId(sensor.getId().getValue());
-        BeanUtils.copyProperties(sensor, this);
-    }
 }

@@ -1,10 +1,12 @@
 package br.com.guntz.sensors.device.management.domain.model;
 
+import br.com.guntz.sensors.device.management.api.model.SensorInput;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.*;
+import org.springframework.beans.BeanUtils;
 
 @Data
 @AllArgsConstructor
@@ -29,4 +31,15 @@ public class Sensor {
 
     private Boolean enabled;
 
+    public void update(SensorInput inputUpdate) {
+        BeanUtils.copyProperties(inputUpdate, this);
+    }
+
+    public void enable() {
+        setEnabled(true);
+    }
+
+    public void disable() {
+        setEnabled(false);
+    }
 }

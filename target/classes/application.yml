@@ -1,9 +1,8 @@
-server:
-  port: '8080'
+#SERVER
+server.port: '8080'
 
 spring:
-  application:
-    name: device-management
+  application.name: device-management
   datasource:
     username: sa
     url: jdbc:h2:file:~/guntz-sensors-device-management-db;CASE_INSENSITIVE_IDENTIFIERS=TRUE;
@@ -13,6 +12,7 @@ spring:
     console:
       enabled: 'true'
       settings.web-allow-others: 'true'
+  #JPA
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:

@@ -1,5 +1,6 @@
 package br.com.guntz.sensors.device.management.api.controller;
 
+import br.com.guntz.sensors.device.management.api.client.SensorMonitoringClient;
 import br.com.guntz.sensors.device.management.api.model.SensorInput;
 import br.com.guntz.sensors.device.management.api.model.SensorOutput;
 import br.com.guntz.sensors.device.management.common.IdGenerator;
@@ -25,6 +26,7 @@ public class SensorController {
 
     private final SensorRepository sensorRepository;
     private final SensorService sensorService;
+    private final SensorMonitoringClient sensorMonitoringClient;
 
     @GetMapping
     public ResponseEntity<Page<SensorOutput>> search(@PageableDefault Pageable pageable) {
@@ -66,6 +68,7 @@ public class SensorController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         sensorService.remove(sensorLocated);
+        sensorMonitoringClient.disableMonitoring(sensorId);
 
         return ResponseEntity.noContent().build();
     }
@@ -76,6 +79,7 @@ public class SensorController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         sensorService.enable(sensorLocated);
+        sensorMonitoringClient.enableMonitoring(sensorId);
 
         return ResponseEntity.noContent().build();
     }
@@ -86,6 +90,7 @@ public class SensorController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         sensorService.disable(sensorLocated);
+        sensorMonitoringClient.disableMonitoring(sensorId);
 
         return ResponseEntity.noContent().build();
     }

@@ -1,7 +1,9 @@
 package br.com.guntz.sensors.device.management.api.controller;
 
 import br.com.guntz.sensors.device.management.api.client.SensorMonitoringClient;
+import br.com.guntz.sensors.device.management.api.model.SensorDetailOutput;
 import br.com.guntz.sensors.device.management.api.model.SensorInput;
+import br.com.guntz.sensors.device.management.api.model.SensorMonitoringOutput;
 import br.com.guntz.sensors.device.management.api.model.SensorOutput;
 import br.com.guntz.sensors.device.management.common.IdGenerator;
 import br.com.guntz.sensors.device.management.domain.model.Sensor;
@@ -43,6 +45,17 @@ public class SensorController {
 
         return ResponseEntity.ok(convertOutputModel(sensor));
     }
+
+    @GetMapping("/{sensorId}/detail")
+    public ResponseEntity<SensorDetailOutput> getOneWithDetail(@PathVariable TSID sensorId) {
+        Sensor sensor = findSensorById(sensorId);
+
+        SensorMonitoringOutput monitoringOutput = sensorMonitoringClient.getDetail(sensorId);
+        SensorOutput sensorOutput = convertOutputModel(sensor);
+
+        return ResponseEntity.ok(convertToDetailOutput(sensorOutput, monitoringOutput));
+    }
+
 
     @PostMapping
     public ResponseEntity<SensorOutput> create(@RequestBody SensorInput input) {
@@ -93,6 +106,13 @@ public class SensorController {
         sensorMonitoringClient.disableMonitoring(sensorId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    private SensorDetailOutput convertToDetailOutput(SensorOutput sensorOutput, SensorMonitoringOutput sensorMonitoringOutput) {
+        return SensorDetailOutput.builder()
+                .sensor(sensorOutput)
+                .monitoring(sensorMonitoringOutput)
+                .build();
     }
 
     private SensorOutput convertOutputModel(Sensor sensor) {

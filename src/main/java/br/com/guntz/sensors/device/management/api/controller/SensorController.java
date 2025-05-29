@@ -39,8 +39,7 @@ public class SensorController {
 
     @GetMapping("/{sensorId}")
     public ResponseEntity<SensorOutput> getOne(@PathVariable TSID sensorId) {
-        Sensor sensor = sensorRepository.findById(new SensorId(sensorId))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Sensor sensor = findSensorById(sensorId);
 
         return ResponseEntity.ok(convertOutputModel(sensor));
     }
@@ -54,18 +53,21 @@ public class SensorController {
 
     @PutMapping("/{sensorId}")
     public ResponseEntity<SensorOutput> update(@PathVariable TSID sensorId, @Valid @RequestBody SensorInput inputUpdate) {
-        Sensor sensorLocated = sensorRepository.findById(new SensorId(sensorId))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Sensor sensorLocated = findSensorById(sensorId);
 
         sensorService.update(sensorLocated, inputUpdate);
 
         return ResponseEntity.ok(convertOutputModel(sensorLocated));
     }
 
+    private Sensor findSensorById(TSID sensorId) {
+        return sensorRepository.findById(new SensorId(sensorId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
     @DeleteMapping("/{sensorId}")
     public ResponseEntity<Object> remove(@PathVariable TSID sensorId) {
-        Sensor sensorLocated = sensorRepository.findById(new SensorId(sensorId))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Sensor sensorLocated = findSensorById(sensorId);
 
         sensorService.remove(sensorLocated);
         sensorMonitoringClient.disableMonitoring(sensorId);
@@ -75,8 +77,7 @@ public class SensorController {
 
     @PutMapping("/{sensorId}/enable")
     public ResponseEntity<Object> enable(@PathVariable TSID sensorId) {
-        Sensor sensorLocated = sensorRepository.findById(new SensorId(sensorId))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Sensor sensorLocated = findSensorById(sensorId);
 
         sensorService.enable(sensorLocated);
         sensorMonitoringClient.enableMonitoring(sensorId);
@@ -86,8 +87,7 @@ public class SensorController {
 
     @DeleteMapping("/{sensorId}/enable")
     public ResponseEntity<Object> disable(@PathVariable TSID sensorId) {
-        Sensor sensorLocated = sensorRepository.findById(new SensorId(sensorId))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Sensor sensorLocated = findSensorById(sensorId);
 
         sensorService.disable(sensorLocated);
         sensorMonitoringClient.disableMonitoring(sensorId);
